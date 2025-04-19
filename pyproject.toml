@@ -1,0 +1,13 @@
+[project]
+name = "manga-stealer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cloudscraper>=1.2.71",
+    "fspy>=0.4.0",
+    "lxml>=5.3.2",
+    "orjson>=3.10.16",
+    "tqdm>=4.67.1",
+]
