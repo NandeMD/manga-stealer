@@ -12,3 +12,7 @@ wheels/
 test.html
 test.json
 test.py
+*.dist
+*.sh
+*.bin
+*nuitka*
