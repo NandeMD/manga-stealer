@@ -13,11 +13,28 @@ argparser = ArgumentParser(
 )
 argparser.add_argument("source", help="The source to download from.")
 argparser.add_argument("-o", "--output", help="The output directory for downloaded manga.", type=str, default=".")
+argparser.add_argument("-c", "--chapters", help="The chapters to download. Example: `12:22.5` (between 12 and 22.5, 12 included, 22.5 excluded)", type=str, default="all")
 
 args = argparser.parse_args()
 
 
+def _parse_chapters(chapters: str) -> tuple[float, float]:
+    """
+    Parse the chapters argument into a tuple of floats.
+    """
+    if chapters == "all":
+        return (0, float("inf"))
+
+    try:
+        start, end = map(float, chapters.split(":"))
+        return (start, end)
+    except ValueError:
+        raise ValueError("Invalid chapters format. Use `start:end` or `all`.")
+
+
 def main():
+    start_chapter, end_chapter = _parse_chapters(args.chapters)
+
     print(f"Hello from manga-stealer! Downloading from source: {args.source}")
     source = match_manga_source(args.source)
     if source:
@@ -29,6 +46,8 @@ def main():
 
     print(f"Fetching source...")
     src_result = source.fetch_source_fn(args.source, source.xpaths)
+    if end_chapter != float("inf"):
+        src_result.chapters = list(filter(lambda c: c.chapter_number_float >= start_chapter and c.chapter_number_float < end_chapter, src_result.chapters)) # type: ignore
     print(f"{src_result}")
 
     if len(src_result.chapters) == 0:
